@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}GoRoute | Dashboard{% endblock %}
+{% block content %}
+<section class="panel">
+    <div class="section-heading">
+        <p class="eyebrow">Operations dashboard</p>
+        <h2>Business and traveler analytics</h2>
+    </div>
+
+    <div class="mini-cards">
+        <article class="mini-card">
+            <h3>{{ totals.total_buses or 0 }}</h3>
+            <p>Total buses</p>
+        </article>
+        <article class="mini-card">
+            <h3>{{ totals.total_bookings or 0 }}</h3>
+            <p>Total bookings</p>
+        </article>
+        <article class="mini-card">
+            <h3>Rs. {{ totals.revenue or 0 }}</h3>
+            <p>Total revenue</p>
+        </article>
+        <article class="mini-card">
+            <h3>{{ popular_route.route_name if popular_route else 'N/A' }}</h3>
+            <p>Most booked route</p>
+        </article>
+        <article class="mini-card">
+            <h3>{{ top_bus.bus_name if top_bus else 'N/A' }}</h3>
+            <p>Top performing bus</p>
+        </article>
+        <article class="mini-card">
+            <h3>{{ '%.1f'|format(feedback_stats.average_rating or 0) }}</h3>
+            <p>Average customer rating</p>
+        </article>
+        <article class="mini-card">
+            <h3>{{ feedback_stats.total_reviews or 0 }}</h3>
+            <p>Total feedback entries</p>
+        </article>
+    </div>
+</section>
+
+<section class="grid-two">
+    <div class="panel">
+        <div class="section-heading">
+            <p class="eyebrow">Revenue trend</p>
+            <h2>Last 7 days</h2>
+        </div>
+        <div class="chart-bars">
+            {% if chart_data %}
+                {% for item in chart_data %}
+                    <div class="chart-bar-item">
+                        <span class="bar-label">{{ item.booking_day }}</span>
+                        <div class="chart-bar">
+                            <span style="height: {{ item.bar_height }}px"></span>
+                        </div>
+                        <strong>Rs. {{ item.day_revenue }}</strong>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No booking analytics yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="section-heading">
+            <p class="eyebrow">Platform capabilities</p>
+            <h2>What now works end to end</h2>
+        </div>
+        <div class="route-list">
+            <div class="route-pill"><strong>Account access</strong><span>Secure registration, login, and password storage</span></div>
+            <div class="route-pill"><strong>Live tracking</strong><span>Current stop, next stop, and progress status</span></div>
+            <div class="route-pill"><strong>Timetable</strong><span>City-wise and operator-wise route schedule</span></div>
+            <div class="route-pill"><strong>AC and non-AC</strong><span>Multiple service classes on every city route</span></div>
+            <div class="route-pill"><strong>PDF tickets</strong><span>Download confirmed tickets as PDF</span></div>
+            <div class="route-pill"><strong>Alternate routes</strong><span>Multi-leg suggestions when direct routes are unavailable</span></div>
+        </div>
+    </div>
+</section>
+{% endblock %}

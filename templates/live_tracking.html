@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}GoRoute | Live Tracking{% endblock %}
+{% block content %}
+<section class="panel">
+    <div class="section-heading">
+        <p class="eyebrow">Live tracking</p>
+        <h2>{{ bus.bus_name }}</h2>
+        <p>{{ bus.operator_name }} | {{ bus.operator_type }} | {{ journey_date_text }}</p>
+    </div>
+
+    <div class="mini-cards">
+        <article class="mini-card">
+            <h3>{{ bus.tracking_status }}</h3>
+            <p>Status</p>
+        </article>
+        <article class="mini-card">
+            <h3>{{ bus.current_stop }}</h3>
+            <p>Current stop</p>
+        </article>
+        <article class="mini-card">
+            <h3>{{ bus.next_stop }}</h3>
+            <p>Next stop</p>
+        </article>
+        <article class="mini-card">
+            <h3>{{ bus.departure_time_text }} - {{ bus.arrival_time_text }}</h3>
+            <p>Scheduled timing</p>
+        </article>
+    </div>
+
+    <div class="progress-bar tracking-bar">
+        <span style="width: {{ bus.tracking_progress }}%"></span>
+    </div>
+    <p class="tracking-copy">{{ bus.tracking_text }}</p>
+
+    <div class="route-list stops-list">
+        {% for stop in bus.stops %}
+            <div class="route-pill {% if stop.stop_name == bus.current_stop %}route-pill-active{% endif %}">
+                <strong>{{ stop.stop_name }}</strong>
+                <span>{{ stop.arrival_offset_mins }} mins from departure</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="hero-actions">
+        <a href="{{ url_for('seats', bus_id=bus.bus_id, journey_date=request.args.get('journey_date')) }}" class="btn btn-primary">Book this bus</a>
+        <a href="{{ url_for('timetable', city=bus.source, journey_date=request.args.get('journey_date')) }}" class="btn btn-secondary">Back to timetable</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}GoRoute | Seat Selection{% endblock %}
+{% block content %}
+<section class="panel">
+    <div class="section-heading">
+        <p class="eyebrow">Seat selection</p>
+        <h2>{{ bus.bus_name }}</h2>
+        <p>{{ bus.operator_name }} | {{ bus.operator_type }} | {{ bus.source }} to {{ bus.destination }}</p>
+        <p>{{ bus.departure_time_text }} to {{ bus.arrival_time_text }} | {{ bus.bus_type }} | {{ bus.layout_name }}</p>
+    </div>
+
+    <div class="seat-legend">
+        <span><i class="legend available"></i> Available</span>
+        <span><i class="legend selected"></i> Selected</span>
+        <span><i class="legend booked"></i> Booked</span>
+    </div>
+
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="coach-shell {{ bus.layout_class }}">
+            <div class="coach-front">
+                <span class="door-label">Entry</span>
+                <span class="driver-wheel"></span>
+            </div>
+            <div class="coach-body">
+                {% for row in seat_rows|batch(4, none) %}
+                    <div class="seat-row">
+                        {% for seat in row %}
+                            {% if loop.index == 3 %}
+                                <span class="coach-aisle"></span>
+                            {% endif %}
+                            {% if seat %}
+                                <label class="seat {% if seat.status == 'booked' %}seat-booked{% endif %}">
+                                    <input type="checkbox" name="seats" value="{{ seat.seat_number }}" {% if seat.status == 'booked' %}disabled{% endif %} onchange="updateSeatSummary()">
+                                    <span>
+                                        <small>{{ 'L' if bus.layout_class == 'sleeper-layout' and seat.seat_number|int is odd else 'U' if bus.layout_class == 'sleeper-layout' else 'Seat' }}</small>
+                                        {{ seat.seat_number }}
+                                    </span>
+                                </label>
+                            {% else %}
+                                <span class="seat seat-placeholder"></span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="booking-summary">
+            <div>
+                <p class="summary-label">Selected seats</p>
+                <strong id="seatSummary">None</strong>
+            </div>
+            <div>
+                <p class="summary-label">Fare per seat</p>
+                <strong>Rs. {{ bus.fare_text }}</strong>
+            </div>
+            <div class="hero-actions">
+                <a href="{{ url_for('live_tracking', bus_id=bus.bus_id, journey_date=session.get('journey_date')) }}" class="btn btn-secondary">View live tracking</a>
+                <button type="submit" class="btn btn-primary">Continue to payment</button>
+            </div>
+        </div>
+    </form>
+</section>
+{% endblock %}

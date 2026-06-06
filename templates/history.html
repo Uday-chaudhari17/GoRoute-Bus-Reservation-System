@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}GoRoute | Booking History{% endblock %}
+{% block content %}
+<section class="grid-two">
+    <div class="panel">
+        <div class="section-heading">
+            <p class="eyebrow">Travel history</p>
+            <h2>Your trip insights</h2>
+        </div>
+        <div class="mini-cards">
+            <article class="mini-card">
+                <h3>{{ insights.total_trips or 0 }}</h3>
+                <p>Confirmed trips</p>
+            </article>
+            <article class="mini-card">
+                <h3>Rs. {{ insights.total_spent or 0 }}</h3>
+                <p>Total spend</p>
+            </article>
+            <article class="mini-card">
+                <h3>{{ top_destination.destination if top_destination else 'N/A' }}</h3>
+                <p>Most visited city</p>
+            </article>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="section-heading">
+            <p class="eyebrow">Refund policy</p>
+            <h2>Manage your bookings</h2>
+        </div>
+        <p>Confirmed tickets can be cancelled from this page.</p>
+        <p>Refund simulation returns 85% of the fare and reopens the seats instantly.</p>
+        <p>You can also submit or update customer feedback for every trip.</p>
+    </div>
+</section>
+
+<section class="results-stack">
+    {% if bookings %}
+        {% for booking in bookings %}
+            <article class="bus-card">
+                <div class="bus-card-top">
+                    <div>
+                        <div class="card-badges">
+                            <span class="badge">{{ booking.operator_type }}</span>
+                            <span class="badge">{{ booking.payment_method }}</span>
+                            <span class="badge {% if booking.ticket_status == 'CONFIRMED' %}badge-success{% else %}badge-danger{% endif %}">
+                                {{ booking.ticket_status }}
+                            </span>
+                        </div>
+                        <h3>{{ booking.bus_name }}</h3>
+                        <p>{{ booking.operator_name }} | {{ booking.route_code }}</p>
+                        <p>{{ booking.source }} to {{ booking.destination }}</p>
+                    </div>
+                    <div class="fare-box">
+                        <strong>Rs. {{ booking.total_fare_text }}</strong>
+                        <span>{{ booking.seats_booked }} seats</span>
+                    </div>
+                </div>
+
+                <div class="bus-meta">
+                    <p>Ref: {{ booking.booking_reference }}</p>
+                    <p>Journey: {{ booking.journey_date_text }}</p>
+                    <p>Booked at: {{ booking.booked_at_text }}</p>
+                    <p>Seats: {{ booking.seat_numbers }}</p>
+                    <p>Status: {{ booking.payment_status }}</p>
+                    <p>Passenger: {{ booking.passenger_name }}</p>
+                </div>
+
+                <div class="hero-actions">
+                    <a href="{{ url_for('ticket', booking_id=booking.booking_id) }}" class="btn btn-secondary">View ticket</a>
+                    <a href="{{ url_for('download_ticket', booking_id=booking.booking_id) }}" class="btn btn-secondary">Download PDF</a>
+                    <a href="{{ url_for('live_tracking', bus_id=booking.bus_id, journey_date=booking.journey_date) }}" class="btn btn-secondary">Track bus</a>
+                    {% if booking.ticket_status == 'CONFIRMED' %}
+                        <form method="POST" action="{{ url_for('cancel', booking_id=booking.booking_id) }}" class="inline-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-danger">Cancel trip</button>
+                        </form>
+                    {% endif %}
+                </div>
+
+                <form method="POST" action="{{ url_for('submit_feedback', booking_id=booking.booking_id) }}" class="feedback-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <label>
+                        <span>Rating</span>
+                        <select name="rating" required>
+                            <option value="">Rate trip</option>
+                            {% for rating in range(1, 6) %}
+                                <option value="{{ rating }}" {% if feedback_map.get(booking.booking_id) and feedback_map.get(booking.booking_id).rating == rating %}selected{% endif %}>{{ rating }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label class="feedback-comment">
+                        <span>Feedback</span>
+                        <input type="text" name="comments" value="{{ feedback_map.get(booking.booking_id).comments if feedback_map.get(booking.booking_id) else '' }}" placeholder="Share your travel experience" required>
+                    </label>
+                    <button type="submit" class="btn btn-primary">
+                        {{ 'Update feedback' if feedback_map.get(booking.booking_id) else 'Submit feedback' }}
+                    </button>
+                </form>
+            </article>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state panel">
+            <h3>No bookings yet</h3>
+            <p>Your confirmed trips will appear here with PDF tickets, tracking, cancellation, and feedback actions.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

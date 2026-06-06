@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}GoRoute | Smart Bus Booking{% endblock %}
+{% block content %}
+<section class="hero-panel">
+    <div class="hero-copy">
+        <p class="eyebrow">Smart bus reservation</p>
+        <h1>Plan, book, track, and manage every bus trip from one calm dashboard.</h1>
+        <p class="hero-text">
+            Compare AC and non-AC buses, reserve seats with live availability,
+            follow route progress, download tickets, and manage feedback after the journey.
+        </p>
+        <div class="hero-actions">
+            <a href="{{ url_for('search') if session.get('user_id') else url_for('login') }}" class="btn btn-primary">Start booking</a>
+            <a href="{{ url_for('timetable') if session.get('user_id') else url_for('register') }}" class="btn btn-secondary">
+                {{ 'View timetable' if session.get('user_id') else 'Create account' }}
+            </a>
+        </div>
+    </div>
+
+    <div class="hero-stats">
+        <div class="stat-card">
+            <span>Live Seats</span>
+            <p>Database-validated availability and secure booking checks.</p>
+        </div>
+        <div class="stat-card">
+            <span>Tracking</span>
+            <p>Current stop, next stop, route progress, and timetable view.</p>
+        </div>
+        <div class="stat-card">
+            <span>Fallback Routes</span>
+            <p>Alternate journey suggestions when direct buses are unavailable.</p>
+        </div>
+    </div>
+</section>
+
+<section class="grid-two">
+    <div class="panel">
+        <div class="section-heading">
+            <p class="eyebrow">Popular routes</p>
+            <h2>Travel demand snapshot</h2>
+        </div>
+        <div class="route-list">
+            {% for route in routes %}
+                <div class="route-pill">
+                    <strong>{{ route.route_name }}</strong>
+                    <span>{{ route.route_count }} scheduled services</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="section-heading">
+            <p class="eyebrow">Top buses</p>
+            <h2>Highest-rated fleet</h2>
+        </div>
+        <div class="mini-cards">
+            {% for bus in top_buses %}
+                <article class="mini-card">
+                    <h3>{{ bus.bus_name }}</h3>
+                    <p>{{ bus.operator_name }} | {{ bus.operator_type }}</p>
+                    <p>{{ bus.source }} to {{ bus.destination }}</p>
+                    <p>{{ bus.departure_time_text }} to {{ bus.arrival_time_text }}</p>
+                    <p>Rs. {{ bus.fare_text }} | Rating {{ bus.rating_text }}</p>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="panel">
+    <div class="section-heading">
+        <p class="eyebrow">Customer feedback</p>
+        <h2>What travelers are saying</h2>
+    </div>
+    {% if feedbacks %}
+        <div class="mini-cards feedback-grid">
+            {% for item in feedbacks %}
+                <article class="mini-card">
+                    <h3>{{ item.name }}</h3>
+                    <p>{{ item.bus_name }} | {{ item.created_at_text }}</p>
+                    <p>{{ item.rating }}/5 stars</p>
+                    <p>{{ item.comments }}</p>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h3>No feedback yet</h3>
+            <p>Once passengers rate their trips, the latest reviews will appear here.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

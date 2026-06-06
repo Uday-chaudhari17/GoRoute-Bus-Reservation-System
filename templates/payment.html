@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}GoRoute | Payment{% endblock %}
+{% block content %}
+<section class="grid-two payment-layout">
+    <div class="panel">
+        <div class="section-heading">
+            <p class="eyebrow">Payment</p>
+            <h2>Secure booking checkout</h2>
+        </div>
+
+        <form method="POST" class="payment-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>
+                <span>Passenger name</span>
+                <input type="text" name="passenger_name" placeholder="Passenger full name" autocomplete="name" required>
+            </label>
+            <label>
+                <span>Emergency contact</span>
+                <input type="text" name="emergency_contact" placeholder="10-digit mobile number" pattern="[6-9][0-9]{9}" maxlength="10" inputmode="numeric" required>
+            </label>
+            <label>
+                <span>Payment method</span>
+                <select name="payment_method" id="paymentMethod" onchange="togglePaymentFields()" required>
+                    <option value="UPI">UPI</option>
+                    <option value="CARD">Card</option>
+                    <option value="WALLET">Wallet</option>
+                </select>
+            </label>
+
+            <div id="upiFields" class="payment-method-group">
+                <label>
+                    <span>UPI ID</span>
+                    <input type="text" name="upi_id" placeholder="name@bank">
+                </label>
+            </div>
+
+            <div id="cardFields" class="payment-method-group hidden">
+                <label>
+                    <span>Card holder</span>
+                    <input type="text" name="card_holder" placeholder="Name on card">
+                </label>
+                <label>
+                    <span>Card number</span>
+                    <input type="text" name="card_number" placeholder="1234 5678 9012 3456" inputmode="numeric">
+                </label>
+                <div class="split-fields">
+                    <label>
+                        <span>Expiry</span>
+                        <input type="text" name="expiry" placeholder="12/28">
+                    </label>
+                    <label>
+                        <span>CVV</span>
+                        <input type="password" name="cvv" placeholder="123" inputmode="numeric" maxlength="4">
+                    </label>
+                </div>
+            </div>
+
+            <div id="walletFields" class="payment-method-group hidden">
+                <label>
+                    <span>Wallet mobile</span>
+                    <input type="text" name="wallet_mobile" placeholder="Linked wallet number" inputmode="numeric" maxlength="10">
+                </label>
+            </div>
+
+            <label>
+                <span>Simulation result</span>
+                <select name="payment_outcome" required>
+                    <option value="SUCCESS">Success</option>
+                    <option value="FAILED">Fail</option>
+                </select>
+            </label>
+
+            <button type="submit" class="btn btn-primary btn-block">Pay Rs. {{ pricing.total }}</button>
+        </form>
+    </div>
+
+    <div class="panel summary-panel">
+        <div class="section-heading">
+            <p class="eyebrow">Trip summary</p>
+            <h2>{{ bus.bus_name }}</h2>
+        </div>
+        <p>{{ bus.operator_name }} | {{ bus.operator_type }}</p>
+        <p>{{ bus.source }} to {{ bus.destination }}</p>
+        <p>{{ bus.departure_time_text }} to {{ bus.arrival_time_text }}</p>
+        <p>Selected seats: {{ selected_seats|join(', ') }}</p>
+
+        <div class="price-breakdown">
+            <div><span>Base fare</span><strong>Rs. {{ pricing.base_total }}</strong></div>
+            <div><span>Weekend surge</span><strong>Rs. {{ pricing.weekend_surge }}</strong></div>
+            <div><span>Group discount</span><strong>- Rs. {{ pricing.group_discount }}</strong></div>
+            <div class="price-total"><span>Total payable</span><strong>Rs. {{ pricing.total }}</strong></div>
+        </div>
+
+        <div class="notification-card">
+            <h3>Travel alerts included</h3>
+            <p>{{ bus.tracking_text }}</p>
+            <p>After booking you can track the bus live, download the ticket as PDF, and leave feedback from history.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

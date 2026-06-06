@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}GoRoute | Login{% endblock %}
+{% block content %}
+<section class="auth-shell">
+    <div class="auth-card">
+        <p class="eyebrow">Traveler access</p>
+        <h1>Login to manage your bus bookings</h1>
+        <form method="POST" class="auth-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>
+                <span>Email</span>
+                <input type="email" name="email" placeholder="you@example.com" required>
+            </label>
+            <label>
+                <span>Password</span>
+                <input type="password" name="password" placeholder="Your password" required>
+            </label>
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </form>
+        <p class="helper-text">Need an account? <a href="{{ url_for('register') }}">Register here</a></p>
+    </div>
+</section>
+{% endblock %}

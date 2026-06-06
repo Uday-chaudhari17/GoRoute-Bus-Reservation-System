@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}GoRoute | Register{% endblock %}
+{% block content %}
+<section class="auth-shell">
+    <div class="auth-card">
+        <p class="eyebrow">Secure registration</p>
+        <h1>Create your traveler profile</h1>
+        <form method="POST" class="auth-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>
+                <span>Full name</span>
+                <input type="text" name="name" placeholder="Uday Kumar" required>
+            </label>
+            <label>
+                <span>Email</span>
+                <input type="email" name="email" placeholder="you@example.com" required>
+            </label>
+            <label>
+                <span>Password</span>
+                <input type="password" name="password" placeholder="Minimum 6 characters" required>
+            </label>
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+        </form>
+        <p class="helper-text">Already registered? <a href="{{ url_for('login') }}">Login here</a></p>
+    </div>
+</section>
+{% endblock %}

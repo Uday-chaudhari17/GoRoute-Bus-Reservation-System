@@ -1,0 +1,171 @@
+<section class="search-layout">
+    <aside class="panel filter-panel">
+        <div class="section-heading">
+            <p class="eyebrow">Advanced filters</p>
+            <h2>{{ page_title }}</h2>
+        </div>
+        <form method="POST" class="search-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <label>
+                <span>From</span>
+                <select name="source" required>
+                    <option value="">Choose source</option>
+                    {% for source in sources %}
+                        <option value="{{ source }}" {% if search_filters.source == source %}selected{% endif %}>{{ source }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                <span>To</span>
+                <select name="destination" required>
+                    <option value="">Choose destination</option>
+                    {% for destination in destinations %}
+                        <option value="{{ destination }}" {% if search_filters.destination == destination %}selected{% endif %}>{{ destination }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                <span>Journey date</span>
+                <input type="date" name="journey_date" value="{{ search_filters.journey_date }}" min="{{ today }}" required>
+            </label>
+            <label>
+                <span>Bus type</span>
+                <select name="bus_type">
+                    <option value="">Any type</option>
+                    <option value="AC Seater" {% if search_filters.bus_type == 'AC Seater' %}selected{% endif %}>AC Seater</option>
+                    <option value="Non AC Seater" {% if search_filters.bus_type == 'Non AC Seater' %}selected{% endif %}>Non AC Seater</option>
+                    <option value="AC Sleeper" {% if search_filters.bus_type == 'AC Sleeper' %}selected{% endif %}>AC Sleeper</option>
+                    <option value="Sleeper" {% if search_filters.bus_type == 'Sleeper' %}selected{% endif %}>Sleeper</option>
+                </select>
+            </label>
+            <label>
+                <span>Minimum rating</span>
+                <select name="rating">
+                    <option value="">Any rating</option>
+                    <option value="4.0" {% if search_filters.rating == '4.0' %}selected{% endif %}>4.0+</option>
+                    <option value="4.5" {% if search_filters.rating == '4.5' %}selected{% endif %}>4.5+</option>
+                </select>
+            </label>
+            <label>
+                <span>Max fare</span>
+                <input type="number" name="max_fare" value="{{ search_filters.max_fare }}" placeholder="e.g. 800">
+            </label>
+            <label>
+                <span>Departure slot</span>
+                <select name="departure_slot">
+                    <option value="">Any time</option>
+                    <option value="Morning" {% if search_filters.departure_slot == 'Morning' %}selected{% endif %}>Morning</option>
+                    <option value="Afternoon" {% if search_filters.departure_slot == 'Afternoon' %}selected{% endif %}>Afternoon</option>
+                    <option value="Evening" {% if search_filters.departure_slot == 'Evening' %}selected{% endif %}>Evening</option>
+                    <option value="Night" {% if search_filters.departure_slot == 'Night' %}selected{% endif %}>Night</option>
+                </select>
+            </label>
+            <label>
+                <span>Minimum seats</span>
+                <input type="number" name="min_seats" value="{{ search_filters.min_seats }}" placeholder="e.g. 2">
+            </label>
+            <button type="button" class="btn btn-secondary" onclick="swapCities()">Swap cities</button>
+            <button type="submit" class="btn btn-primary">Search buses</button>
+        </form>
+    </aside>
+
+    <div class="results-column">
+        <section class="panel">
+            <div class="section-heading">
+                <p class="eyebrow">Recommended for you</p>
+                <h2>Smart suggestions</h2>
+            </div>
+            {% if last_search %}
+                <div class="notification-card">
+                    <h3>Recent search</h3>
+                    <p>{{ last_search.source }} to {{ last_search.destination }}</p>
+                </div>
+            {% endif %}
+            <div class="mini-cards">
+                {% for bus in recommendations %}
+                    <article class="mini-card">
+                        <h3>{{ bus.bus_name }}</h3>
+                        <p>{{ bus.operator_name }} | {{ bus.operator_type }}</p>
+                        <p>{{ bus.source }} to {{ bus.destination }}</p>
+                        <p>{{ bus.departure_time_text }} to {{ bus.arrival_time_text }}</p>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="results-stack">
+            {% if buses %}
+                {% for bus in buses %}
+                    <article class="bus-card">
+                        <div class="bus-card-top">
+                            <div>
+                                <div class="card-badges">
+                                    <span class="badge">{{ bus.operator_type }}</span>
+                                    <span class="badge">{{ bus.bus_type }}</span>
+                                    {% if bus.recommended %}<span class="badge badge-accent">Recommended</span>{% endif %}
+                                    {% if bus.rating >= 4.5 %}<span class="badge badge-success">Top rated</span>{% endif %}
+                                </div>
+                                <h3>{{ bus.bus_name }}</h3>
+                                <p>{{ bus.operator_name }} | {{ bus.route_code }}</p>
+                                <p>{{ bus.source }} to {{ bus.destination }}</p>
+                            </div>
+                            <div class="fare-box">
+                                <strong>Rs. {{ bus.fare_text }}</strong>
+                                <span>{{ bus.available_seats }}/{{ bus.total_seats }} seats left</span>
+                            </div>
+                        </div>
+
+                        <div class="bus-meta">
+                            <p>{{ bus.departure_time_text }} to {{ bus.arrival_time_text }}</p>
+                            <p>Rating {{ bus.rating_text }}</p>
+                            <p>{{ bus.departure_slot }} departure</p>
+                            <p>{{ bus.amenities }}</p>
+                            <p>Status: {{ bus.tracking_status }}</p>
+                            <p>Current: {{ bus.current_stop }} | Next: {{ bus.next_stop }}</p>
+                        </div>
+
+                        <div class="progress-bar">
+                            <span style="width: {{ bus.tracking_progress }}%"></span>
+                        </div>
+                        <p class="tracking-copy">{{ bus.tracking_text }}</p>
+
+                        <div class="hero-actions">
+                            <a href="{{ url_for('seats', bus_id=bus.bus_id, journey_date=search_filters.journey_date) }}" class="btn btn-primary">Choose seats</a>
+                            <a href="{{ url_for('live_tracking', bus_id=bus.bus_id, journey_date=search_filters.journey_date) }}" class="btn btn-secondary">Live tracking</a>
+                        </div>
+                    </article>
+                {% endfor %}
+            {% elif search_filters.source and search_filters.destination %}
+                <div class="empty-state panel">
+                    <h3>No direct buses found</h3>
+                    <p>Try another filter or use the alternate routes shown below.</p>
+                </div>
+            {% else %}
+                <div class="empty-state panel">
+                    <h3>Search to see available buses</h3>
+                    <p>Direct buses, filters, recommendations, and fallback routes will appear here.</p>
+                </div>
+            {% endif %}
+
+            {% if alternate_routes %}
+                <section class="panel">
+                    <div class="section-heading">
+                        <p class="eyebrow">Alternate route</p>
+                        <h2>No direct bus? Try these multi-leg options</h2>
+                    </div>
+                    <div class="mini-cards">
+                        {% for route in alternate_routes %}
+                            <article class="mini-card">
+                                <h3>{{ route.source }} to {{ route.destination }} via {{ route.transit_city }}</h3>
+                                <p>Leg 1: {{ route.leg1.bus_name }} | {{ route.leg1.departure_time_text }} to {{ route.leg1.arrival_time_text }}</p>
+                                <p>Leg 2: {{ route.leg2.bus_name }} | {{ route.leg2.departure_time_text }} to {{ route.leg2.arrival_time_text }}</p>
+                                <p>Layover: {{ route.layover_minutes }} mins</p>
+                                <p>Total estimated fare: Rs. {{ route.total_fare }}</p>
+                            </article>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+        </section>
+    </div>
+</section>

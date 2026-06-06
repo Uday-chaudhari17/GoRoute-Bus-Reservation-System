@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}GoRoute | Timetable{% endblock %}
+{% block content %}
+<section class="panel">
+    <div class="section-heading">
+        <p class="eyebrow">Real-time timetable</p>
+        <h2>Bus schedule by city and operator</h2>
+    </div>
+
+    <form method="POST" class="search-form timetable-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <label>
+            <span>City</span>
+            <select name="city">
+                <option value="">All cities</option>
+                {% for city in cities %}
+                    <option value="{{ city }}" {% if filters.city == city %}selected{% endif %}>{{ city }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            <span>Date</span>
+            <input type="date" name="journey_date" value="{{ filters.journey_date }}" min="{{ today }}" required>
+        </label>
+        <button type="submit" class="btn btn-primary">View timetable</button>
+    </form>
+</section>
+
+<section class="results-stack">
+    {% if buses %}
+        {% for bus in buses %}
+            <article class="bus-card">
+                <div class="bus-card-top">
+                    <div>
+                        <div class="card-badges">
+                            <span class="badge">{{ bus.operator_type }}</span>
+                            <span class="badge">{{ bus.route_code }}</span>
+                        </div>
+                        <h3>{{ bus.bus_name }}</h3>
+                        <p>{{ bus.operator_name }} | {{ bus.source }} to {{ bus.destination }}</p>
+                    </div>
+                    <div class="fare-box">
+                        <strong>{{ bus.departure_time_text }}</strong>
+                        <span>Arrival {{ bus.arrival_time_text }}</span>
+                    </div>
+                </div>
+
+                <div class="bus-meta">
+                    <p>Status: {{ bus.tracking_status }}</p>
+                    <p>{{ bus.tracking_text }}</p>
+                    <p>Current: {{ bus.current_stop }}</p>
+                    <p>Next: {{ bus.next_stop }}</p>
+                </div>
+
+                <div class="route-list stops-list">
+                    {% for stop in bus.stops %}
+                        <div class="route-pill">
+                            <strong>{{ stop.stop_name }}</strong>
+                            <span>{{ stop.arrival_offset_mins }} mins from start</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="hero-actions">
+                    <a href="{{ url_for('seats', bus_id=bus.bus_id, journey_date=filters.journey_date) }}" class="btn btn-primary">Book seats</a>
+                    <a href="{{ url_for('live_tracking', bus_id=bus.bus_id, journey_date=filters.journey_date) }}" class="btn btn-secondary">Open tracking</a>
+                </div>
+            </article>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state panel">
+            <h3>No timetable entries found</h3>
+            <p>Try another city, date, or operator filter.</p>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

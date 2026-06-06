@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}GoRoute | Ticket{% endblock %}
+{% block content %}
+<section class="ticket-shell">
+    <div class="ticket-box">
+        <div class="ticket-header">
+            <div>
+                <p class="eyebrow">Confirmed ticket</p>
+                <h2>{{ booking.booking_reference }}</h2>
+            </div>
+            <span class="badge badge-success">{{ booking.ticket_status }}</span>
+        </div>
+
+        <div class="ticket-grid">
+            <div>
+                <p class="summary-label">Passenger</p>
+                <strong>{{ booking.passenger_name }}</strong>
+            </div>
+            <div>
+                <p class="summary-label">Emergency contact</p>
+                <strong>{{ booking.emergency_contact }}</strong>
+            </div>
+            <div>
+                <p class="summary-label">Bus</p>
+                <strong>{{ booking.bus_name }}</strong>
+            </div>
+            <div>
+                <p class="summary-label">Operator</p>
+                <strong>{{ booking.operator_name }} | {{ booking.operator_type }}</strong>
+            </div>
+            <div>
+                <p class="summary-label">Route</p>
+                <strong>{{ booking.source }} to {{ booking.destination }}</strong>
+            </div>
+            <div>
+                <p class="summary-label">Journey date</p>
+                <strong>{{ booking.journey_date_text }}</strong>
+            </div>
+            <div>
+                <p class="summary-label">Timing</p>
+                <strong>{{ booking.departure_time_text }} to {{ booking.arrival_time_text }}</strong>
+            </div>
+            <div>
+                <p class="summary-label">Seats</p>
+                <strong>{{ booking.seat_numbers }}</strong>
+            </div>
+            <div>
+                <p class="summary-label">Paid amount</p>
+                <strong>Rs. {{ booking.total_fare_text }}</strong>
+            </div>
+            <div>
+                <p class="summary-label">Live status</p>
+                <strong>{{ booking.tracking_status }} | {{ booking.current_stop }} to {{ booking.next_stop }}</strong>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <span style="width: {{ booking.tracking_progress }}%"></span>
+        </div>
+        <p class="tracking-copy">{{ booking.tracking_text }}</p>
+
+        <div class="qr-card">
+            <p class="summary-label">QR payload</p>
+            <code>{{ qr_payload }}</code>
+        </div>
+
+        <div class="hero-actions">
+            <button type="button" onclick="window.print()" class="btn btn-primary no-print">Print ticket</button>
+            <a href="{{ url_for('download_ticket', booking_id=booking.booking_id) }}" class="btn btn-secondary">Download PDF</a>
+            <a href="{{ url_for('live_tracking', bus_id=booking.bus_id, journey_date=booking.journey_date) }}" class="btn btn-secondary">Live tracking</a>
+        </div>
+
+        {% if feedback %}
+            <div class="notification-card">
+                <h3>Your feedback</h3>
+                <p>{{ feedback.rating }}/5 stars</p>
+                <p>{{ feedback.comments }}</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
