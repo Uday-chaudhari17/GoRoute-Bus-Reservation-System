@@ -1,0 +1,65 @@
+%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 4 0 R /F2 5 0 R >> >> /Contents 6 0 R >> endobj
+4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
+5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >> endobj
+6 0 obj << /Length 710 >> stream
+q
+0.95 0.98 0.97 rg
+36 36 540 770 re f
+0.06 0.46 0.43 RG
+2 w
+36 36 540 770 re S
+BT
+/F2 22 Tf
+0.06 0.46 0.43 rg
+54 760 Td
+(GoRoute Confirmed Bus Ticket) Tj
+/F1 11 Tf
+0.09 0.13 0.16 rg
+0 -34 Td
+16 TL
+(Booking Ref: GRC5A3F4C9) Tj
+T*
+(Passenger: John) Tj
+T*
+(Bus: CityLink Bangalore AC Seater \(CityLink Roadways\)) Tj
+T*
+(Bus Type: AC Seater) Tj
+T*
+(Route: Mumbai to Bangalore) Tj
+T*
+(Date: 07 Jun 2026) Tj
+T*
+(Timing: 06:15 to 12:45) Tj
+T*
+(Seats: 18,23,26,28) Tj
+T*
+(Status: CONFIRMED) Tj
+T*
+(Payment: SUCCESS via UPI) Tj
+T*
+(Amount: Rs. 2973.60) Tj
+T*
+(Emergency Contact: 8545965692) Tj
+T*
+0 -14 Td
+/F1 9 Tf
+(Carry a valid ID proof. This ticket is valid only for the passenger and journey shown above.) Tj
+ET
+Q
+endstream endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000321 00000 n 
+0000000396 00000 n 
+trailer << /Size 7 /Root 1 0 R >>
+startxref
+1157
+%%EOF
