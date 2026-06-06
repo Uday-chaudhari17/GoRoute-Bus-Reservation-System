@@ -1,4 +1,4 @@
-#🚌 GoRoute Bus Reservation System
+## 🚌 GoRoute Bus Reservation System
 
 A Flask and MySQL based online bus reservation system that allows users to search buses, reserve seats, generate tickets, manage bookings, and simulate payments through an intuitive web interface.
 
@@ -23,35 +23,6 @@ A Flask and MySQL based online bus reservation system that allows users to searc
 * CSS3
 * JavaScript
 
-## 📸 Screenshots
-
-### Home Page
-
-![Home Page](screenshots/home-page.png)
-
-### Login Page
-
-![Login Page](screenshots/login-page.png)
-
-### Bus Search
-
-![Bus Search](screenshots/bus-search.png)
-
-### Seat Booking
-
-![Seat Booking](screenshots/seat-booking.png)
-
-### Payment Page
-
-![Payment](screenshots/payment-page.png)
-
-### Ticket Generation
-
-![Ticket](screenshots/ticket-page.png)
-
-### Dashboard
-
-![Dashboard](screenshots/dashboard.png)
 
 ## 🚀 Installation
 
